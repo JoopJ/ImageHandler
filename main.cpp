@@ -9,7 +9,6 @@
 #include "src/Shader.h"
 #include "src/image_renderer.h"
 #include "src/image_browser.h"
-#include "src/imgui_handler.h"
 
 #include <vector>
 
