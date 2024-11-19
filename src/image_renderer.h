@@ -6,6 +6,7 @@
 #include "image_parsers/bmp_parser.h"
 #include "image_parsers/tga_parser.h"
 #include "shader.h"
+#include "image_util.h"
 
 #include <string>
 #include <vector>

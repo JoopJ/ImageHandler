@@ -1,5 +1,5 @@
 #include "image_browser.h"
-#include <iostream> // for std::cerr
+#include <iostream>
 
 ImageBrowser::ImageBrowser(const std::string& folderPath) 
 	: folderPath(folderPath), selectedFile("") {
@@ -12,7 +12,6 @@ void ImageBrowser::LoadFileList() {
 		for (const auto& entry : std::filesystem::directory_iterator(folderPath)) {
 			if (entry.is_regular_file()) {
 				fileList.push_back(entry.path().string());
-				//std::cout << "Found file: " << entry.path().string() << std::endl;
 			}
 		}
 	}
@@ -29,7 +28,7 @@ bool ImageBrowser::Display() {
 		const bool is_selected = selectedFile == file;
 		if (ImGui::Selectable(file.c_str(), is_selected)) {
 			selectedFile = file;
-			std::cout << "Selected file: " << selectedFile << std::endl;
+			//std::cout << "Selected file: " << selectedFile << std::endl;
 			newFileSelected = true;
 		}
 	}

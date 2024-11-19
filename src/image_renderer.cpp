@@ -24,10 +24,14 @@ void ImageRenderer::load_image_from_file(const std::string& filename)
 	}
 	else if (strcmp(file_extension, "bmp") == 0) {
 		pixelData = load_BMP(filename.c_str(), width, height);
+		// BMP files are stored in BGR format, so swap B and R	
+		swap_red_and_blue(pixelData, width, height, 3);
 		flipped = true;
 	}
 	else if (strcmp(file_extension, "tga") == 0) {
 		pixelData = load_TGA(filename.c_str(), width, height);
+		// TGA files are stored in BGR format, so swap B and R
+		swap_red_and_blue(pixelData, width, height, 3);
 		flipped = true;
 	}
 	else {
