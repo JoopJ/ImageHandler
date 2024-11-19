@@ -8,7 +8,6 @@
 
 #include "src/image_renderer.h"
 #include "src/image_browser.h"
-#include "src/image_parsers/bmp_parser.h"
 
 #include <vector>
 

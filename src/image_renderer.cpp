@@ -26,8 +26,17 @@ void ImageRenderer::load_image_from_file(const std::string& filename)
 		pixelData = load_BMP(filename.c_str(), width, height);
 		flipped = true;
 	}
+	else if (strcmp(file_extension, "tga") == 0) {
+		pixelData = load_TGA(filename.c_str(), width, height);
+		flipped = true;
+	}
 	else {
 		std::cerr << "Unsupported file extension: " << file_extension << std::endl;
+		if (width == 0 && height == 0) {
+			width = 800;
+			height = 600;
+		}
+		return;
 	}
 
 	glGenTextures(1, &texture);
