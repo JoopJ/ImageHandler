@@ -1,7 +1,10 @@
 #include "image_renderer.h"
 
-ImageRenderer::ImageRenderer() : texture(0), VAO(0), 
-	VBO(0), width(0), height(0) {}
+ImageRenderer::ImageRenderer(const char* vertexPath, const char* fragmentPath) : texture(0), VAO(0), 
+	VBO(0), width(0), height(0) {
+	loaded = false;
+	shader = Shader(vertexPath, fragmentPath);
+}
 
 ImageRenderer::~ImageRenderer() {
 	if (texture) glDeleteTextures(1, &texture);
@@ -63,6 +66,9 @@ void ImageRenderer::setup_rendering() {
 }
 
 void ImageRenderer::render() {
+	shader.use();
+	shader.setInt("texture1", 0);
+
 	GLint currentVAO, currentTexture;
 	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
 	glGetIntegerv(GL_TEXTURE_BINDING_2D, &currentTexture);

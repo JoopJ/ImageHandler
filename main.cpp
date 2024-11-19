@@ -6,7 +6,6 @@
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 
-#include "src/Shader.h"
 #include "src/image_renderer.h"
 #include "src/image_browser.h"
 
@@ -25,6 +24,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 int main() {
      
 	// Intializations
+	// GLFW
     glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -38,12 +38,12 @@ int main() {
 	}
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
+	// Glad
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "Failed to initialise GLAD" << std::endl;
         return -1;
     }
-
+	// ImGui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -51,10 +51,9 @@ int main() {
 	ImGuiStyle& style = ImGui::GetStyle();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 460");
+	//----------------------------------------------
 
-	// Build and compile shader program
-	Shader shader("src/shaders/basic.vert", "src/shaders/basic.frag");
-	ImageRenderer image_renderer;
+	ImageRenderer image_renderer("src/shaders/basic.vert", "src/shaders/basic.frag");
 	image_renderer.setup_rendering();
 	ImageBrowser image_browser("images/");
 
@@ -77,12 +76,10 @@ int main() {
 		// Rendering
 		// ImGui
 		ImGui::Render();
-		glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.1f, 0.5f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// Image
-		shader.use();
-		shader.setInt("texture1", 0);
 		if (image_renderer.is_image_loaded()) {
 			image_renderer.render();
 		}

@@ -12,7 +12,7 @@ void ImageBrowser::LoadFileList() {
 		for (const auto& entry : std::filesystem::directory_iterator(folderPath)) {
 			if (entry.is_regular_file()) {
 				fileList.push_back(entry.path().string());
-				std::cout << "Found file: " << entry.path().string() << std::endl;
+				//std::cout << "Found file: " << entry.path().string() << std::endl;
 			}
 		}
 	}

@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 
 #include "ppm_parser.h"
+#include "shader.h"
 
 #include <string>
 #include <vector>
@@ -10,7 +11,7 @@
 class ImageRenderer
 {
 public:
-	ImageRenderer();
+	ImageRenderer(const char* vertexPath, const char* fragmentPath);
 	void load_image_from_file(const std::string& filename);
 	void setup_rendering();
 	void render();
@@ -23,5 +24,7 @@ private:
 	unsigned int texture, VAO, VBO;
 	int width, height;
 	bool loaded;
+
+	Shader shader;
 };
 
