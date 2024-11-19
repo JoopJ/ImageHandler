@@ -26,5 +26,7 @@ private:
 	bool loaded;
 
 	Shader shader;
+
+	const char* get_file_extension(const std::string& filename);
 };
 

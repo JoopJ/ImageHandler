@@ -14,16 +14,19 @@ ImageRenderer::~ImageRenderer() {
 
 void ImageRenderer::load_image_from_file(const std::string& filename)
 {
-	// Check file is of type PPM
-	if (filename.substr(filename.find_last_of(".") + 1) != "ppm") {
-		std::cout << "Filename: " << filename << std::endl;
-		std::cerr << "Error: File is not of type PPM" << std::endl;
-		return;
+	std::vector<unsigned char> pixelData;
+
+	const char* file_extension = get_file_extension(filename);
+
+	if (strcmp(file_extension, "ppm") == 0) {
+		auto tuple_result = extract_ppm_pixel_data(filename);
+		pixelData = std::get<0>(tuple_result);
+		width = std::get<1>(tuple_result);
+		height = std::get<2>(tuple_result);
 	}
-	auto tuple_result = extract_ppm_pixel_data(filename);
-	std::vector<unsigned char> pixelData = std::get<0>(tuple_result);
-	width = std::get<1>(tuple_result);
-	height = std::get<2>(tuple_result);
+	else {
+		std::cerr << "Unsupported file extension: " << file_extension << std::endl;
+	}
 
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -80,4 +83,12 @@ void ImageRenderer::render() {
 	glBindVertexArray(VAO);
 	if (glIsVertexArray(VAO) == GL_FALSE) std::cerr << "VAO is not valid" << std::endl;
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+}
+
+const char* ImageRenderer::get_file_extension(const std::string& filename) {
+	size_t dotIndex = filename.rfind(".");
+	if (dotIndex == std::string::npos) {
+		return "";
+	}
+	return filename.c_str() + dotIndex + 1;
 }
