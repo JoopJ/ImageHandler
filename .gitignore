@@ -396,3 +396,10 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# My Filters
+*.sln
+*.vcxproj
+*.vcxproj.filters
+imgui.ini
+.vscode/

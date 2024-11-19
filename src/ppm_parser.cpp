@@ -28,10 +28,10 @@ std::tuple<std::string, int, int, int> extract_ppm_header
 
     iss >> magic_number >> width >> height >> maxval;
 
-    std::cout << "Magic number: " << magic_number << std::endl;
-    std::cout << "Width: " << width << std::endl;
-    std::cout << "Height: " << height << std::endl;
-    std::cout << "Maxval: " << maxval << std::endl;
+    //std::cout << "Magic number: " << magic_number << std::endl;
+    //std::cout << "Width: " << width << std::endl;
+    //std::cout << "Height: " << height << std::endl;
+    //std::cout << "Maxval: " << maxval << std::endl;
 
     return { magic_number, width, height, maxval };
 }

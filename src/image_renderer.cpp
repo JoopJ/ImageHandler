@@ -1,4 +1,4 @@
-#include "ImageRenderer.h"
+#include "image_renderer.h"
 
 ImageRenderer::ImageRenderer() : texture(0), VAO(0), 
 	VBO(0), width(0), height(0) {}
@@ -9,20 +9,18 @@ ImageRenderer::~ImageRenderer() {
 	if (VBO) glDeleteBuffers(1, &VBO);
 }
 
-void ImageRenderer::load_image_from_rgb(const std::string& filename)
+void ImageRenderer::load_image_from_file(const std::string& filename)
 {
+	// Check file is of type PPM
+	if (filename.substr(filename.find_last_of(".") + 1) != "ppm") {
+		std::cout << "Filename: " << filename << std::endl;
+		std::cerr << "Error: File is not of type PPM" << std::endl;
+		return;
+	}
 	auto tuple_result = extract_ppm_pixel_data(filename);
 	std::vector<unsigned char> pixelData = std::get<0>(tuple_result);
 	width = std::get<1>(tuple_result);
 	height = std::get<2>(tuple_result);
-
-	// testing
-	unsigned char imageData[] = {
-		255, 0, 0,   // Red
-		0, 255, 0,   // Green
-		0, 0, 255,   // Blue
-		255, 255, 0  // Yellow
-	};
 
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -33,12 +31,12 @@ void ImageRenderer::load_image_from_rgb(const std::string& filename)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixelData.data());
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
 
 	GLenum err = glGetError();
 	if (err != GL_NO_ERROR) {
 		std::cerr << "Error loading texture: " << err << std::endl;
 	}
+	loaded = true;
 }
 
 void ImageRenderer::setup_rendering() {
