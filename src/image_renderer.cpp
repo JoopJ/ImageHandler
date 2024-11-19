@@ -1,6 +1,6 @@
 #include "image_renderer.h"
 
-ImageRenderer::ImageRenderer(const char* vertexPath, const char* fragmentPath) : texture(0), VAO(0), 
+ImageRenderer::ImageRenderer() : texture(0), VAO(0), 
 	VBO(0), width(0), height(0) {
 	loaded = false;
 	shader = Shader(vertexPath, fragmentPath);
@@ -14,15 +14,17 @@ ImageRenderer::~ImageRenderer() {
 
 void ImageRenderer::load_image_from_file(const std::string& filename)
 {
-	std::vector<unsigned char> pixelData;
+	unsigned char* pixelData = nullptr;
 
 	const char* file_extension = get_file_extension(filename);
 
 	if (strcmp(file_extension, "ppm") == 0) {
-		auto tuple_result = extract_ppm_pixel_data(filename);
-		pixelData = std::get<0>(tuple_result);
-		width = std::get<1>(tuple_result);
-		height = std::get<2>(tuple_result);
+		pixelData = load_PPM(filename.c_str(), width, height);
+		flipped = false;
+	}
+	else if (strcmp(file_extension, "bmp") == 0) {
+		pixelData = load_BMP(filename.c_str(), width, height);
+		flipped = true;
 	}
 	else {
 		std::cerr << "Unsupported file extension: " << file_extension << std::endl;
@@ -36,7 +38,7 @@ void ImageRenderer::load_image_from_file(const std::string& filename)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixelData.data());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixelData);
 
 	GLenum err = glGetError();
 	if (err != GL_NO_ERROR) {
@@ -71,6 +73,12 @@ void ImageRenderer::setup_rendering() {
 void ImageRenderer::render() {
 	shader.use();
 	shader.setInt("texture1", 0);
+	if (flipped) {
+		shader.setBool("flipped", true);
+	}
+	else {
+		shader.setBool("flipped", false);
+	}
 
 	GLint currentVAO, currentTexture;
 	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);

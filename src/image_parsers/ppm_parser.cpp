@@ -36,11 +36,12 @@ std::tuple<std::string, int, int, int> extract_ppm_header
     return { magic_number, width, height, maxval };
 }
 
-std::tuple<std::vector<unsigned char>, int, int> extract_ppm_pixel_data(const std::string& filename) {
+std::vector<unsigned char> extract_ppm_pixel_data(
+    const std::string& filename, int& width, int& height) 
+{
     std::streampos size;
     char* memblock;
     std::vector<unsigned char> pixelData;
-	int width = -1, height = -1;
 
     std::ifstream file(filename, std::ios::in |
         std::ios::binary | std::ios::ate);
@@ -57,7 +58,7 @@ std::tuple<std::vector<unsigned char>, int, int> extract_ppm_pixel_data(const st
         }
         else {
             std::cout << "Error reading file" << std::endl;
-            return { pixelData, 0, 0 };
+            return pixelData;
         }
         file.close();
 
@@ -92,7 +93,60 @@ std::tuple<std::vector<unsigned char>, int, int> extract_ppm_pixel_data(const st
     else std::cout << "Unable to open file";
 
 
-    return { pixelData, width, height };
+    return pixelData;
+}
+
+unsigned char* load_PPM(const char* filename, int& width, int& height)
+{
+    std::streampos size;
+	char* memblock;
+	unsigned char* pixelData = nullptr;
+
+	std::ifstream file(filename, std::ios::in | std::ios::binary | 
+        std::ios::ate);
+
+    if (file.is_open())
+    {
+        size = file.tellg();
+		memblock = new char[size];
+
+		file.seekg(0, std::ios::beg);
+        if (!file.read(memblock, size)) {
+            std::cout << "Error reading file" << std::endl;
+            delete[] memblock;
+            return nullptr;
+        }
+		file.close();
+        
+		int header_end = find_ppm_header_end(std::string(memblock));
+
+		auto header = extract_ppm_header(std::string(memblock, header_end));
+		width = std::get<1>(header);
+		height = std::get<2>(header);
+
+		// Allocate memory for pixel data
+		int pixel_data_offset = header_end + 1;
+		size_t pixelDataSize = width * height * 3;
+		pixelData = new unsigned char[pixelDataSize];
+
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                int pixel_offset = pixel_data_offset +
+                    (row * width + col) * 3;
+
+                int data_index = (row * width + col) * 3;
+
+                pixelData[data_index] = memblock[pixel_offset];         // Red
+                pixelData[data_index + 1] = memblock[pixel_offset + 1]; // Green
+                pixelData[data_index + 2] = memblock[pixel_offset + 2]; // Blue
+            }
+        }
+
+		delete[] memblock;
+    }
+	else std::cout << "Unable to open file";
+
+	return pixelData;
 }
 
 std::tuple<int, int> extract_image_dimensions(const std::string& filename) 

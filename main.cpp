@@ -8,6 +8,7 @@
 
 #include "src/image_renderer.h"
 #include "src/image_browser.h"
+#include "src/image_parsers/bmp_parser.h"
 
 #include <vector>
 
@@ -53,7 +54,7 @@ int main() {
 	ImGui_ImplOpenGL3_Init("#version 460");
 	//----------------------------------------------
 
-	ImageRenderer image_renderer("src/shaders/basic.vert", "src/shaders/basic.frag");
+	ImageRenderer image_renderer;
 	image_renderer.setup_rendering();
 	ImageBrowser image_browser("images/");
 

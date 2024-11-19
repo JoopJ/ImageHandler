@@ -2,7 +2,8 @@
 
 #include <glad/glad.h>
 
-#include "ppm_parser.h"
+#include "image_parsers/ppm_parser.h"
+#include "image_parsers/bmp_parser.h"
 #include "shader.h"
 
 #include <string>
@@ -11,7 +12,7 @@
 class ImageRenderer
 {
 public:
-	ImageRenderer(const char* vertexPath, const char* fragmentPath);
+	ImageRenderer();
 	void load_image_from_file(const std::string& filename);
 	void setup_rendering();
 	void render();
@@ -24,8 +25,12 @@ private:
 	unsigned int texture, VAO, VBO;
 	int width, height;
 	bool loaded;
+	bool flipped = false;
 
 	Shader shader;
+	const char* vertexPath = "src/shaders/basic.vert";
+	const char* fragmentPath = "src/shaders/basic.frag";
+
 
 	const char* get_file_extension(const std::string& filename);
 };
