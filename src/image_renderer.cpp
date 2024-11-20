@@ -42,6 +42,10 @@ void ImageRenderer::load_image_from_file(const std::string& filename)
 		}
 		return;
 	}
+	if (pixelData == nullptr) {
+		std::cerr << "Error loading image: " << filename << std::endl;
+		return;
+	}
 
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);

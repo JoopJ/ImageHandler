@@ -19,7 +19,7 @@ struct TGAHeader {
 	uint8_t attribBits : 3;		// Number of attribute bits associated with each pixel
 	uint8_t reserved : 1;		// Reserved. Must be 0
 	uint8_t screenOrigin : 1;	// 0 = origin in bottom left corner. 1 = origin in top left corner.
-	uint8_t interleaving : 1;	// Data storage interleaving flag
+	uint8_t interleaving : 2;	// Data storage interleaving flag
 	// Image Identification Field (optional)
 	// Color map data (optional)
 	// Image data
