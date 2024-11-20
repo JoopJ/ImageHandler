@@ -20,18 +20,19 @@ void ImageRenderer::load_image_from_file(const std::string& filename)
 
 	if (strcmp(file_extension, "ppm") == 0) {
 		pixelData = load_PPM(filename.c_str(), width, height);
+		RGB = true;
 		flipped = false;
 	}
 	else if (strcmp(file_extension, "bmp") == 0) {
 		pixelData = load_BMP(filename.c_str(), width, height);
 		// BMP files are stored in BGR format, so swap B and R	
-		swap_red_and_blue(pixelData, width, height, 3);
+		RGB = false;
 		flipped = true;
 	}
 	else if (strcmp(file_extension, "tga") == 0) {
 		pixelData = load_TGA(filename.c_str(), width, height);
 		// TGA files are stored in BGR format, so swap B and R
-		swap_red_and_blue(pixelData, width, height, 3);
+		RGB = false;
 		flipped = true;
 	}
 	else {
@@ -55,7 +56,12 @@ void ImageRenderer::load_image_from_file(const std::string& filename)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixelData);
+	if (RGB) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixelData);
+	}
+	else {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, pixelData);
+	}
 
 	GLenum err = glGetError();
 	if (err != GL_NO_ERROR) {
