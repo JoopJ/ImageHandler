@@ -42,7 +42,8 @@ unsigned char* load_TGA(const char* filename, int& width, int& height)
 	height = header.height;
 
 	// Find the size of the image data
-	size_t dataSize = width * height * (header.bitsPerPixel / 8);
+	size_t rowStride = (width * (header.bitsPerPixel / 8) + 3) & ~3; // Row size padded to multiple of 4 bytes
+	size_t dataSize = rowStride * height;
 	unsigned char* pixelData = new unsigned char[dataSize];
 
 	// Find start of image data
