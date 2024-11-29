@@ -62,4 +62,3 @@ unsigned char* load_BMP(const char* filename, int& width, int& height) {
 	file.close();
 	return pixelData;
 }
-

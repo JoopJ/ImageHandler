@@ -5,6 +5,7 @@
 #include "image_parsers/ppm_parser.h"
 #include "image_parsers/bmp_parser.h"
 #include "image_parsers/tga_parser.h"
+#include "image_parsers/png_parser.h"
 #include "shader.h"
 
 #include <string>
@@ -27,7 +28,8 @@ private:
 	int width, height;
 	bool loaded;
 	bool flipped = false;
-	bool RGB = true;
+	GLint internalFormat;
+	GLenum dataFormat;
 
 	Shader shader;
 	const char* vertexPath = "src/shaders/basic.vert";

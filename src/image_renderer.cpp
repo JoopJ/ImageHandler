@@ -18,31 +18,49 @@ void ImageRenderer::load_image_from_file(const std::string& filename)
 
 	const char* file_extension = get_file_extension(filename);
 
+	// Default values
+	width = 800;
+	height = 600;
 	if (strcmp(file_extension, "ppm") == 0) {
+		internalFormat = GL_RGB;
 		pixelData = load_PPM(filename.c_str(), width, height);
-		RGB = true;
+		dataFormat = GL_RGB;
 		flipped = false;
 	}
 	else if (strcmp(file_extension, "bmp") == 0) {
+		internalFormat = GL_RGB;
 		pixelData = load_BMP(filename.c_str(), width, height);
 		// BMP files are stored in BGR format, so swap B and R	
-		RGB = false;
+		dataFormat = GL_BGR;
 		flipped = true;
 	}
 	else if (strcmp(file_extension, "tga") == 0) {
+		internalFormat = GL_RGB;
 		pixelData = load_TGA(filename.c_str(), width, height);
 		// TGA files are stored in BGR format, so swap B and R
-		RGB = false;
+		dataFormat = GL_BGR;
 		flipped = true;
+	} 
+	else if (strcmp(file_extension, "png") == 0) {
+		internalFormat = GL_RGBA;
+		PNGReader pngReader(filename.c_str(), width, height);
+		pixelData = new unsigned char[width * height * 4];
+		memcpy(pixelData, pngReader.get_pixel_data(), width * height * 4);
+		dataFormat = GL_RGBA;
+		flipped = false;
 	}
 	else {
-		std::cerr << "Unsupported file extension: " << file_extension << std::endl;
-		if (width == 0 && height == 0) {
-			width = 800;
-			height = 600;
+		// Check if unsupported file extension is critical or not
+		if (isupper(file_extension[0])) {
+			std::cerr << "Unsupported file extension: " << file_extension << std::endl;
+			return;
+		}
+		else {
+			std::cout << "Unsupported file extension: " << file_extension << std::endl;
 		}
 		return;
 	}
+	// Handle failed image loading
 	if (pixelData == nullptr) {
 		std::cerr << "Error loading image: " << filename << std::endl;
 		return;
@@ -57,18 +75,16 @@ void ImageRenderer::load_image_from_file(const std::string& filename)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	if (RGB) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixelData);
-	}
-	else {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, pixelData);
-	}
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, 
+		GL_UNSIGNED_BYTE, pixelData);
 
 	GLenum err = glGetError();
 	if (err != GL_NO_ERROR) {
 		std::cerr << "Error loading texture: " << err << std::endl;
 	}
 	loaded = true;
+
+	std::cout << "Loaded image: " << filename << "\n\n";
 }
 
 void ImageRenderer::setup_rendering() {
