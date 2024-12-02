@@ -47,6 +47,7 @@ int main() {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	ImGui::StyleColorsDark();
 	ImGuiStyle& style = ImGui::GetStyle();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -60,7 +61,7 @@ int main() {
     // Loop
 	while (window != NULL && !glfwWindowShouldClose(window)) 
     {
-		//process_input(window);
+		process_input(window);
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -86,6 +87,11 @@ int main() {
 
 		// Render ImGui
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+			glfwMakeContextCurrent(window);
+		}
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
