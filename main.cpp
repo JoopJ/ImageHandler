@@ -71,6 +71,7 @@ int main() {
 		ImGui::NewFrame();
 
 		if (image_browser.Display()) {
+			ImageInfo::getInstance().Clear(); // Clear previous image info
 			// when a new file is selected, load the image and resize the window
 			image_renderer.load_image_from_file(image_browser.GetSelectedFile());
 			glfwSetWindowSize(window, image_renderer.get_width(), 
