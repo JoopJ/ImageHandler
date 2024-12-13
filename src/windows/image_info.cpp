@@ -2,11 +2,9 @@
 
 void ImageInfo::AddInfo(const char* key, const char* value) {
 	info.push_back({ key, value });
-	std::cout << "Added info: " << key << " " << value << std::endl;
 }
 void ImageInfo::AddTab(const char* tabName, const int tabSize) {
 	tabs.push_back({tabName, tabSize});
-	std::cout << "Added tab: " << tabName << " " << tabSize << std::endl;
 }
 
 void ImageInfo::Clear() {
