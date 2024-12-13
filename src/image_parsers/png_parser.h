@@ -4,6 +4,7 @@
 #include <fstream>
 #include <vector>
 #include <zlib/zlib.h>
+#include "../windows/image_info.h"
 
 #pragma pack(push, 1)
 struct IHDRChunk {

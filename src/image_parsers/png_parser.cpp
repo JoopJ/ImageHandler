@@ -31,6 +31,13 @@ void PNGReader::load_PNG(const char* filename) {
 		std::cerr << "Error opening file: " << filename << std::endl;
 		return;
 	}
+	// Display File Size
+	m_file.seekg(0, std::ios::end);
+	ImageInfo::getInstance().AddTab("PNG Info", 1);
+	int size = m_file.tellg();
+	ImageInfo::getInstance().AddInfo("File Size", std::to_string(size).c_str());
+
+	m_file.seekg(0, std::ios::beg);
 
 	// Check if the file is a PNG
 	if (!verify_signature()) {
@@ -39,7 +46,6 @@ void PNGReader::load_PNG(const char* filename) {
 		return;
 	}
 
-	// Read chunks
 	uint32_t dataLength;
 	char* chunkType = new char[5];	// 4 bytes + null terminator
 	unsigned char* chunkData;
@@ -74,6 +80,17 @@ void PNGReader::load_PNG(const char* filename) {
 			// Convert to little-endian
 			m_IHDR.width = _byteswap_ulong(m_IHDR.width);
 			m_IHDR.height = _byteswap_ulong(m_IHDR.height);
+
+			// Update info
+			std::cout << "Adding IHDR info" << std::endl;
+			ImageInfo::getInstance().AddTab("IHDR Info", 7);
+			ImageInfo::getInstance().AddInfo("Width", std::to_string(m_IHDR.width).data());
+			ImageInfo::getInstance().AddInfo("Height", std::to_string(m_IHDR.height).data());
+			ImageInfo::getInstance().AddInfo("Bit Depth", std::to_string(m_IHDR.bitDepth).data());
+			ImageInfo::getInstance().AddInfo("Color Type", std::to_string(m_IHDR.colorType).data());
+			ImageInfo::getInstance().AddInfo("Compression Method", std::to_string(m_IHDR.compressionMethod).data());
+			ImageInfo::getInstance().AddInfo("Filter Method", std::to_string(m_IHDR.filterMethod).data());
+			ImageInfo::getInstance().AddInfo("Interlace Method", std::to_string(m_IHDR.interlaceMethod).data());
 		}
 		else if (strcmp(chunkType, "IEND") == 0) {
 			//std::cout << "IEND chunk found at " << m_current_chunk_start_pos << std::endl;

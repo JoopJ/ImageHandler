@@ -6,8 +6,9 @@
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 
-#include "src/image_renderer.h"
-#include "src/image_browser.h"
+#include "src/windows/image_renderer.h"
+#include "src/windows/image_browser.h"
+#include "src/windows/image_info.h"
 
 #include <vector>
 
@@ -58,6 +59,8 @@ int main() {
 	image_renderer.setup_rendering();
 	ImageBrowser image_browser("images/");
 
+	//----------------------------------------------
+
     // Loop
 	while (window != NULL && !glfwWindowShouldClose(window)) 
     {
@@ -73,6 +76,7 @@ int main() {
 			glfwSetWindowSize(window, image_renderer.get_width(), 
 				image_renderer.get_height());
 		}
+		ImageInfo::getInstance().Display();
 
 		// Rendering
 		// ImGui
@@ -87,6 +91,7 @@ int main() {
 
 		// Render ImGui
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		// Render Viewports
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
